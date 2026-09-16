@@ -97,6 +97,14 @@ Route::get('/track/{order_number}', function ($order_number) {
 
 Route::get('/run-migration', function () {
     try {
+        if ($url = config('database.connections.pgsql.url')) {
+            config(['database.connections.pgsql.url' => str_replace('-pooler', '', $url)]);
+        }
+        if ($host = config('database.connections.pgsql.host')) {
+            config(['database.connections.pgsql.host' => str_replace('-pooler', '', $host)]);
+        }
+        \Illuminate\Support\Facades\DB::purge('pgsql');
+
         \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
         
