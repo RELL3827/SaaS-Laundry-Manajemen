@@ -89,28 +89,30 @@ return [
             'url' => (function () {
                 $url = env('DB_URL', env('DATABASE_URL'));
                 if (!$url) return null;
-                $url = str_replace('-pooler', '', (string) $url);
+                $url = trim((string) $url, " \t\n\r\0\x0B\"'");
+                $url = str_replace('-pooler', '', $url);
                 if (preg_match('/@([^\/:]+)/', $url, $hostMatch)) {
                     if (preg_match('/^(ep-[a-z0-9-]+)/', $hostMatch[1], $epMatch)) {
-                        $endpoint = $epMatch[1];
+                        $endpoint = str_replace('-pooler', '', $epMatch[1]);
                         if (!str_contains($url, ':endpoint%3D') && !str_contains($url, ':endpoint=')) {
                             $url = preg_replace_callback('/:\/\/([^:]+):([^@]+)@/', function ($m) use ($endpoint) {
-                                return "://{$m[1]}:endpoint%3D{$endpoint}%24{$m[2]}@";
+                                $cleanPwd = trim($m[2], " \t\n\r\0\x0B\"'");
+                                return "://{$m[1]}:endpoint%3D{$endpoint}%24{$cleanPwd}@";
                             }, $url);
                         }
                     }
                 }
                 return $url;
             })(),
-            'host' => str_replace('-pooler', '', (string) env('DB_HOST', '127.0.0.1')),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
+            'host' => trim(str_replace('-pooler', '', (string) env('DB_HOST', '127.0.0.1')), " \t\n\r\0\x0B\"'"),
+            'port' => trim((string) env('DB_PORT', '5432'), " \t\n\r\0\x0B\"'"),
+            'database' => trim((string) env('DB_DATABASE', 'neondb'), " \t\n\r\0\x0B\"'"),
+            'username' => trim((string) env('DB_USERNAME', 'neondb_owner'), " \t\n\r\0\x0B\"'"),
             'password' => (function () {
-                $pwd = (string) env('DB_PASSWORD', '');
-                $host = (string) env('DB_HOST', '');
+                $pwd = trim((string) env('DB_PASSWORD', ''), " \t\n\r\0\x0B\"'");
+                $host = str_replace('-pooler', '', (string) env('DB_HOST', ''));
                 if (preg_match('/^(ep-[a-z0-9-]+)/', $host, $epMatch)) {
-                    $endpoint = $epMatch[1];
+                    $endpoint = str_replace('-pooler', '', $epMatch[1]);
                     if ($pwd && !str_starts_with($pwd, 'endpoint=')) {
                         return "endpoint={$endpoint}\${$pwd}";
                     }
@@ -121,7 +123,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'sslmode' => env('DB_SSLMODE', 'require'),
         ],
 
         'sqlsrv' => [
