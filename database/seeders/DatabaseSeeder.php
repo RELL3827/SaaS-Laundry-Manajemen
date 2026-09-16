@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Customer::firstOrCreate(
+        $siti = Customer::firstOrCreate(
             ['tenant_id' => $tenant->id, 'phone' => '081987654321'],
             [
                 'name' => 'Siti Rahma',
@@ -82,5 +82,42 @@ class DatabaseSeeder extends Seeder
                 'points' => 40
             ]
         );
+
+        // 6. Demo Order for Tracking & Testing
+        $budi = Customer::where('phone', '081234567890')->first();
+        $owner = User::where('email', 'owner@laundrypro.id')->first();
+        $reguler = Service::where('tenant_id', $tenant->id)->where('type', 'kiloan')->first();
+
+        $demoOrder = \App\Models\Order::firstOrCreate(
+            ['order_number' => 'LDR-20260915-0001'],
+            [
+                'tenant_id' => $tenant->id,
+                'customer_id' => $budi?->id,
+                'user_id' => $owner?->id,
+                'status' => 'Diproses',
+                'subtotal' => 21000,
+                'discount' => 0,
+                'total' => 21000,
+                'payment_status' => 'Lunas',
+                'notes' => 'Wangi Lavender, tolong lipat rapi'
+            ]
+        );
+
+        if ($reguler && \App\Models\OrderItem::where('order_id', $demoOrder->id)->count() === 0) {
+            \App\Models\OrderItem::create([
+                'order_id' => $demoOrder->id,
+                'service_id' => $reguler->id,
+                'qty' => 3,
+                'price' => $reguler->price,
+                'subtotal' => 3 * $reguler->price,
+            ]);
+            \App\Models\Payment::create([
+                'tenant_id' => $tenant->id,
+                'order_id' => $demoOrder->id,
+                'amount' => $demoOrder->total,
+                'method' => 'Cash',
+                'paid_at' => now(),
+            ]);
+        }
     }
 }
