@@ -90,11 +90,13 @@ return [
                 $url = env('DB_URL', env('DATABASE_URL', env('POSTGRES_URL', env('POSTGRES_URL_NON_POOLING'))));
                 if (!$url) return null;
                 $url = trim((string) $url, " \t\n\r\0\x0B\"'");
-                // Strip channel_binding which causes SCRAM-SHA-256 password authentication failure on serverless Linux proxies
+                // Strip channel_binding which causes SCRAM authentication issues on serverless proxies
                 $url = preg_replace('/([?&])channel_binding=[^&]*(&?)/', '$1', $url);
                 $url = rtrim($url, '?&');
                 $url = str_replace('-pooler', '', $url);
-                if (preg_match('/@([^\/:]+)/', $url, $hostMatch)) {
+
+                // Only on Windows without SNI support in libpq do we inject endpoint into password
+                if (PHP_OS_FAMILY === 'Windows' && preg_match('/@([^\/:]+)/', $url, $hostMatch)) {
                     if (preg_match('/^(ep-[a-z0-9-]+)/', $hostMatch[1], $epMatch)) {
                         $endpoint = str_replace('-pooler', '', $epMatch[1]);
                         if (!str_contains($url, ':endpoint%3D') && !str_contains($url, ':endpoint=')) {
@@ -114,7 +116,7 @@ return [
             'password' => (function () {
                 $pwd = trim((string) env('DB_PASSWORD', env('POSTGRES_PASSWORD', '')), " \t\n\r\0\x0B\"'");
                 $host = str_replace('-pooler', '', (string) env('DB_HOST', env('POSTGRES_HOST', '')));
-                if (preg_match('/^(ep-[a-z0-9-]+)/', $host, $epMatch)) {
+                if (PHP_OS_FAMILY === 'Windows' && preg_match('/^(ep-[a-z0-9-]+)/', $host, $epMatch)) {
                     $endpoint = str_replace('-pooler', '', $epMatch[1]);
                     if ($pwd && !str_starts_with($pwd, 'endpoint=')) {
                         return "endpoint={$endpoint}\${$pwd}";
