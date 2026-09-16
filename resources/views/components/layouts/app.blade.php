@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'LaundryPro SaaS' }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ asset('favicon.png') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -20,8 +24,9 @@
     <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col justify-between">
         <div>
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl font-bold text-blue-600">LaundryPro</span>
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ asset('favicon.svg') }}" alt="LaundryPro" class="w-7 h-7 rounded-lg shadow-xs">
+                    <span class="text-xl font-bold text-slate-900 tracking-tight">Laundry<span class="text-blue-600">Pro</span></span>
                 </div>
                 @if($isPro)
                     <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-900 uppercase tracking-wider shadow-xs flex items-center gap-1">
@@ -133,7 +138,8 @@
         @auth
         <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 md:hidden">
             <div class="flex items-center gap-2">
-                <span class="text-xl font-bold text-blue-600">LaundryPro</span>
+                <img src="{{ asset('favicon.svg') }}" alt="LaundryPro" class="w-6 h-6 rounded-md">
+                <span class="text-lg font-bold text-slate-900 tracking-tight">Laundry<span class="text-blue-600">Pro</span></span>
                 @if($isPro ?? false)
                     <span class="px-1.5 py-0.5 text-[9px] font-black rounded-full bg-amber-400 text-slate-900">👑 PRO</span>
                 @else

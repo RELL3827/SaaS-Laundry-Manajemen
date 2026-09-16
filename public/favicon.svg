@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="laundryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="drumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#2563EB" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container -->
+  <rect width="64" height="64" rx="18" fill="url(#laundryGrad)" filter="url(#glow)"/>
+
+  <!-- Washing Machine Body -->
+  <rect x="12" y="10" width="40" height="44" rx="8" fill="#FFFFFF" fill-opacity="0.15" stroke="#FFFFFF" stroke-width="2.5" />
+
+  <!-- Control Panel Line -->
+  <line x1="12" y1="20" x2="52" y2="20" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.6"/>
+  <!-- Status Lights / Knobs -->
+  <circle cx="18" cy="15" r="2" fill="#FBBF24" />
+  <circle cx="24" cy="15" r="1.5" fill="#34D399" />
+  <circle cx="44" cy="15" r="2.5" fill="#FFFFFF" fill-opacity="0.8"/>
+
+  <!-- Washer Drum Outer -->
+  <circle cx="32" cy="37" r="13" fill="#1E40AF" stroke="#FFFFFF" stroke-width="2.5" />
+
+  <!-- Washer Drum Inner / Water Wave -->
+  <circle cx="32" cy="37" r="9" fill="url(#drumGrad)" />
+  <path d="M25 38 C 27 35, 30 35, 32 38 C 34 41, 37 41, 39 38" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" fill="none" />
+  <circle cx="30" cy="34" r="1.2" fill="#FFFFFF" fill-opacity="0.9"/>
+  <circle cx="35" cy="33" r="0.8" fill="#FFFFFF" fill-opacity="0.7"/>
+
+  <!-- Sparkle Accent in Corner -->
+  <path d="M50 8 L51.5 12.5 L56 14 L51.5 15.5 L50 20 L48.5 15.5 L44 14 L48.5 12.5 Z" fill="#FBBF24" />
+</svg>
