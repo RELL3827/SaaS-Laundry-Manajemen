@@ -157,6 +157,16 @@ class OrderTrackingAndStatusTest extends TestCase
         $response->assertSee('Rina Wijaya');
         $response->assertSee('Cuci Kering Setrika');
         $response->assertSee('Diterima');
+
+        // Test accessing /track without parameter
+        $trackRootResponse = $this->get('/track');
+        $trackRootResponse->assertStatus(200);
+        $trackRootResponse->assertSee('Cek Status Cucian Real-Time');
+
+        // Test non-existent order number handles gracefully without 404
+        $notFoundResponse = $this->get('/track/INVALID-ORDER-999');
+        $notFoundResponse->assertStatus(200);
+        $notFoundResponse->assertSee('Pesanan Tidak Ditemukan');
     }
 
     public function test_login_and_register_pages_have_back_button(): void

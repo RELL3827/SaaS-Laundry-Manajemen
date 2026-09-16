@@ -10,7 +10,7 @@ use App\Models\Tenant;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 
-new #[Layout('components.layouts.app')] class extends Component
+new #[Layout('components.layouts.guest')] class extends Component
 {
     #[Url]
     public $plan = 'free';
@@ -64,7 +64,7 @@ new #[Layout('components.layouts.app')] class extends Component
             Auth::login($user);
         });
 
-        return redirect()->intended('/dashboard');
+        $this->redirect('/dashboard', navigate: true);
     }
 };
 ?>

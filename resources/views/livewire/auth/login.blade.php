@@ -5,7 +5,7 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-new #[Layout('components.layouts.app')] class extends Component
+new #[Layout('components.layouts.guest')] class extends Component
 {
     public $email = '';
     public $password = '';
@@ -19,10 +19,11 @@ new #[Layout('components.layouts.app')] class extends Component
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
             session()->regenerate();
-            return redirect()->intended('/dashboard');
+            $this->redirectIntended(default: '/dashboard', navigate: true);
+            return;
         }
 
-        $this->addError('email', 'Kredensial tidak valid.');
+        $this->addError('email', 'Email atau kata sandi tidak cocok dengan data kami.');
     }
 };
 ?>

@@ -88,9 +88,31 @@ Route::middleware(['auth'])->group(function () {
     })->name('logout');
 });
 
-Route::get('/track/{order_number}', function ($order_number) {
-    $order = App\Models\Order::withoutGlobalScopes()->with(['tenant', 'customer', 'items.service'])
-            ->where('order_number', $order_number)->firstOrFail();
-    
-    return view('track', compact('order'));
+Route::match(['get', 'post'], '/track/{order_number?}', function (\Illuminate\Http\Request $request, $order_number = null) {
+    $searchNumber = $order_number ?? $request->input('order_number') ?? $request->query('q');
+
+    $order = null;
+    $searched = !empty($searchNumber);
+
+    if ($searchNumber) {
+        $searchClean = trim($searchNumber);
+        $order = App\Models\Order::withoutGlobalScopes()
+            ->with(['tenant', 'customer', 'items.service'])
+            ->where('order_number', $searchClean)
+            ->orWhereHas('customer', function($q) use ($searchClean) {
+                $q->where('phone', $searchClean);
+            })
+            ->latest()
+            ->first();
+    }
+
+    if ($request->isMethod('post') && $order) {
+        return redirect()->route('track', ['order_number' => $order->order_number]);
+    }
+
+    return view('track', [
+        'order' => $order,
+        'searchNumber' => $searchNumber,
+        'searched' => $searched,
+    ]);
 })->name('track');
