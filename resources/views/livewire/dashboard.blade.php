@@ -19,12 +19,18 @@ new #[Layout('components.layouts.app')] class extends Component
         $this->totalOrders = Order::where('tenant_id', $tenantId)->count();
         $this->totalCustomers = Customer::where('tenant_id', $tenantId)->count();
         $this->todayRevenue = Order::where('tenant_id', $tenantId)
-                                ->whereDate('created_at', today())
+                                ->where('created_at', '>=', today()->startOfDay())
                                 ->sum('total');
 
         $stages = ['Diterima', 'Dicuci', 'Dikeringkan', 'Disetrika', 'Selesai', 'Diambil'];
+        $countsFromDb = Order::where('tenant_id', $tenantId)
+                            ->selectRaw('status, count(*) as total')
+                            ->groupBy('status')
+                            ->pluck('total', 'status')
+                            ->toArray();
+
         foreach ($stages as $st) {
-            $this->statusCounts[$st] = Order::where('tenant_id', $tenantId)->where('status', $st)->count();
+            $this->statusCounts[$st] = (int) ($countsFromDb[$st] ?? 0);
         }
     }
 
@@ -50,7 +56,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <p class="text-sm text-slate-500 mt-1">Selamat datang kembali, <span class="font-semibold text-slate-800">{{ auth()->user()->name }}</span> ({{ auth()->user()->tenant?->name }})</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="/orders/create" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow transition-all">
+            <a href="/orders/create" wire:navigate.hover class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Terima Cucian Baru
             </a>
@@ -219,7 +225,7 @@ new #[Layout('components.layouts.app')] class extends Component
                             <a href="/track/{{ $ro->order_number }}" target="_blank" class="inline-flex items-center text-xs font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
                                 Lacak
                             </a>
-                            <a href="/orders/{{ $ro->id }}" class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-md border border-blue-200">
+                            <a href="/orders/{{ $ro->id }}" wire:navigate.hover class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-md border border-blue-200">
                                 Detail & Ubah Status
                             </a>
                         </td>

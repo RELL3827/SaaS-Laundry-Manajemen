@@ -124,9 +124,11 @@ new #[Layout('components.layouts.app')] class extends Component
             <h1 class="text-2xl font-bold text-gray-900">Manajemen Layanan</h1>
             <p class="text-sm text-gray-500 mt-0.5">Atur paket cucian, tarif harga kiloan/satuan, dan status layanan</p>
         </div>
-        <button wire:click="openModal" type="button" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2.5 rounded-xl shadow-sm hover:shadow font-medium text-sm flex items-center gap-2 transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Tambah Layanan
+        <button wire:click="openModal" wire:loading.attr="disabled" type="button" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white px-4 py-2.5 rounded-xl shadow-sm hover:shadow font-medium text-sm flex items-center gap-2 transition-all">
+            <svg wire:loading.remove wire:target="openModal" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <svg wire:loading wire:target="openModal" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span wire:loading.remove wire:target="openModal">Tambah Layanan</span>
+            <span wire:loading wire:target="openModal">Membuka Form...</span>
         </button>
     </div>
 
@@ -177,14 +179,20 @@ new #[Layout('components.layouts.app')] class extends Component
                             <div class="text-sm font-semibold text-gray-900">Rp {{ number_format($service->price, 0, ',', '.') }} <span class="text-xs text-gray-500 font-normal">/ {{ $service->unit }}</span></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <button wire:click="toggleActive({{ $service->id }})" title="Klik untuk ubah status" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors {{ $service->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-200/60 hover:bg-rose-100' }}">
+                            <button wire:click="toggleActive({{ $service->id }})" wire:loading.attr="disabled" title="Klik untuk ubah status" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors disabled:opacity-50 {{ $service->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-200/60 hover:bg-rose-100' }}">
                                 <span class="w-1.5 h-1.5 rounded-full mr-1.5 self-center {{ $service->is_active ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
                                 {{ $service->is_active ? 'Aktif' : 'Nonaktif' }}
                             </button>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button wire:click="edit({{ $service->id }})" class="text-blue-600 hover:text-blue-800 font-semibold mr-3 transition-colors">Edit</button>
-                            <button wire:click="delete({{ $service->id }})" wire:confirm="Yakin ingin menghapus layanan ini?" class="text-rose-600 hover:text-rose-800 font-semibold transition-colors">Hapus</button>
+                            <button wire:click="edit({{ $service->id }})" wire:loading.attr="disabled" class="text-blue-600 hover:text-blue-800 disabled:opacity-50 font-semibold mr-3 transition-colors">
+                                <span wire:loading.remove wire:target="edit({{ $service->id }})">Edit</span>
+                                <span wire:loading wire:target="edit({{ $service->id }})">...</span>
+                            </button>
+                            <button wire:click="delete({{ $service->id }})" wire:confirm="Yakin ingin menghapus layanan ini?" wire:loading.attr="disabled" class="text-rose-600 hover:text-rose-800 disabled:opacity-50 font-semibold transition-colors">
+                                <span wire:loading.remove wire:target="delete({{ $service->id }})">Hapus</span>
+                                <span wire:loading wire:target="delete({{ $service->id }})">...</span>
+                            </button>
                         </td>
                     </tr>
                     @empty
@@ -274,9 +282,10 @@ new #[Layout('components.layouts.app')] class extends Component
                     </div>
                 </div>
                 <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
-                    <button type="submit" class="inline-flex justify-center items-center px-4 py-2.5 bg-blue-600 border border-transparent rounded-xl font-semibold text-sm text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <button type="submit" wire:loading.attr="disabled" class="inline-flex justify-center items-center px-4 py-2.5 bg-blue-600 border border-transparent rounded-xl font-semibold text-sm text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-60 transition-colors">
                         <svg wire:loading wire:target="save" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Simpan Layanan
+                        <span wire:loading.remove wire:target="save">Simpan Layanan</span>
+                        <span wire:loading wire:target="save">Menyimpan...</span>
                     </button>
                     <button type="button" wire:click="closeModal" class="inline-flex justify-center items-center px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 shadow-xs hover:bg-gray-50 focus:outline-none transition-colors">
                         Batal

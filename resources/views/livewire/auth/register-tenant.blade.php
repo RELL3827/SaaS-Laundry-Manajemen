@@ -158,15 +158,16 @@ new #[Layout('components.layouts.guest')] class extends Component
                 @error('password') <span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
             </div>
 
-            <button type="submit" class="w-full py-3.5 px-4 rounded-xl shadow-md text-sm font-extrabold text-white {{ $plan === 'pro' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/25' : 'bg-blue-600 hover:bg-blue-700' }} active:scale-95 transition-all flex items-center justify-center gap-2 mt-2">
+            <button type="submit" wire:loading.attr="disabled" class="w-full py-3.5 px-4 rounded-xl shadow-md text-sm font-extrabold text-white {{ $plan === 'pro' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/25' : 'bg-blue-600 hover:bg-blue-700' }} active:scale-95 disabled:opacity-60 transition-all flex items-center justify-center gap-2 mt-2">
                 <svg wire:loading wire:target="register" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <span>Daftar dengan {{ $plan === 'pro' ? 'Paket Pro (Aktifkan Semua Fitur)' : 'Paket Gratis' }}</span>
+                <span wire:loading.remove wire:target="register">Daftar dengan {{ $plan === 'pro' ? 'Paket Pro (Aktifkan Semua Fitur)' : 'Paket Gratis' }}</span>
+                <span wire:loading wire:target="register">Mendaftarkan Outlet Baru...</span>
             </button>
         </form>
 
         <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-500">
             <span>Sudah memiliki akun outlet?</span>
-            <a href="/login" class="text-blue-600 font-bold hover:underline ml-1">Masuk ke Portal</a>
+            <a href="/login" wire:navigate.hover class="text-blue-600 font-bold hover:underline ml-1">Masuk ke Portal</a>
         </div>
     </div>
 </div>

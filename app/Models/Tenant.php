@@ -40,8 +40,7 @@ class Tenant extends Model
     public function getMonthlyOrdersCount(): int
     {
         return $this->orders()
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
+            ->where('created_at', '>=', now()->startOfMonth())
             ->count();
     }
 

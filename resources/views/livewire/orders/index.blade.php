@@ -88,7 +88,7 @@ new #[Layout('components.layouts.app')] class extends Component
                 </button>
             @endif
 
-            <a href="/orders/create" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2.5 rounded-xl shadow-sm hover:shadow font-medium text-sm flex items-center gap-2 transition-all">
+            <a href="/orders/create" wire:navigate.hover class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2.5 rounded-xl shadow-sm hover:shadow font-medium text-sm flex items-center gap-2 transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Buat Order / Terima Cucian
             </a>
@@ -166,7 +166,7 @@ new #[Layout('components.layouts.app')] class extends Component
                                 $badgeClass = $statusBadges[$order->status] ?? 'bg-slate-100 text-slate-700 border-slate-200';
                             @endphp
                             <div class="flex items-center gap-2">
-                                <select wire:change="updateStatus({{ $order->id }}, $event.target.value)" class="text-xs font-semibold rounded-lg border border-slate-200 py-1 px-2 bg-white hover:border-blue-400 focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-2xs">
+                                <select wire:change="updateStatus({{ $order->id }}, $event.target.value)" wire:loading.attr="disabled" class="text-xs font-semibold rounded-lg border border-slate-200 py-1 px-2 bg-white hover:border-blue-400 focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-2xs disabled:opacity-50">
                                     <option value="Diterima" {{ $order->status === 'Diterima' ? 'selected' : '' }}>Diterima</option>
                                     <option value="Dicuci" {{ $order->status === 'Dicuci' ? 'selected' : '' }}>Dicuci</option>
                                     <option value="Dikeringkan" {{ $order->status === 'Dikeringkan' ? 'selected' : '' }}>Dikeringkan</option>
@@ -193,10 +193,10 @@ new #[Layout('components.layouts.app')] class extends Component
                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 Lacak
                             </a>
-                            <a href="/orders/{{ $order->id }}" class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-md border border-blue-200 transition-colors">
+                            <a href="/orders/{{ $order->id }}" wire:navigate.hover class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-md border border-blue-200 transition-colors">
                                 Detail
                             </a>
-                            <button wire:click="deleteOrder({{ $order->id }})" wire:confirm="Apakah Anda yakin ingin menghapus order ini secara permanen?" class="inline-flex items-center text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 px-2 py-1 rounded-md border border-rose-200 transition-colors">
+                            <button wire:click="deleteOrder({{ $order->id }})" wire:confirm="Apakah Anda yakin ingin menghapus order ini secara permanen?" wire:loading.attr="disabled" class="inline-flex items-center text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 px-2 py-1 rounded-md border border-rose-200 transition-colors disabled:opacity-50">
                                 Hapus
                             </button>
                         </td>

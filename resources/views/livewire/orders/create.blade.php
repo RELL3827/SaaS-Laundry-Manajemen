@@ -436,8 +436,10 @@ new #[Layout('components.layouts.app')] class extends Component
             </div>
 
             @if($canCreate)
-                <button wire:click="processOrder" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-md text-lg font-bold text-white bg-green-600 hover:bg-green-700 active:scale-98 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all">
-                    Proses Order
+                <button wire:click="processOrder" wire:loading.attr="disabled" class="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-md text-lg font-bold text-white bg-green-600 hover:bg-green-700 active:scale-98 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-60 transition-all">
+                    <svg wire:loading wire:target="processOrder" class="animate-spin w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span wire:loading.remove wire:target="processOrder">Proses Order</span>
+                    <span wire:loading wire:target="processOrder">Memproses Pesanan...</span>
                 </button>
             @else
                 <div class="p-4 bg-rose-50 border-2 border-dashed border-rose-300 rounded-2xl text-center space-y-2">
@@ -464,7 +466,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <p class="text-lg text-gray-500 mb-6">Nomor Order: <span class="font-bold text-gray-900">{{ $createdOrderNumber }}</span></p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
-                <a href="/orders/{{ $createdOrderId }}" class="inline-flex justify-center items-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700">
+                <a href="/orders/{{ $createdOrderId }}" wire:navigate.hover class="inline-flex justify-center items-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     Lihat & Lacak Status
                 </a>
