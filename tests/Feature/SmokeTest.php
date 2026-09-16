@@ -47,5 +47,10 @@ class SmokeTest extends TestCase
             $response = $this->get($url);
             $response->assertStatus(200);
         }
+
+        $dashboard = $this->get('/dashboard');
+        $dashboard->assertSee('Laundry');
+        $dashboard->assertSee('Pro');
+        $dashboard->assertSee('bg-gradient-to-tr from-blue-600 to-indigo-600', false);
     }
 }
