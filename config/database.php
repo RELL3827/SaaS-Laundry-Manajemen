@@ -86,12 +86,37 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL', env('DATABASE_URL')) ? str_replace('-pooler', '', (string) env('DB_URL', env('DATABASE_URL'))) : null,
+            'url' => (function () {
+                $url = env('DB_URL', env('DATABASE_URL'));
+                if (!$url) return null;
+                $url = str_replace('-pooler', '', (string) $url);
+                if (preg_match('/@([^\/:]+)/', $url, $hostMatch)) {
+                    if (preg_match('/^(ep-[a-z0-9-]+)/', $hostMatch[1], $epMatch)) {
+                        $endpoint = $epMatch[1];
+                        if (!str_contains($url, ':endpoint%3D') && !str_contains($url, ':endpoint=')) {
+                            $url = preg_replace_callback('/:\/\/([^:]+):([^@]+)@/', function ($m) use ($endpoint) {
+                                return "://{$m[1]}:endpoint%3D{$endpoint}%24{$m[2]}@";
+                            }, $url);
+                        }
+                    }
+                }
+                return $url;
+            })(),
             'host' => str_replace('-pooler', '', (string) env('DB_HOST', '127.0.0.1')),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'password' => (function () {
+                $pwd = (string) env('DB_PASSWORD', '');
+                $host = (string) env('DB_HOST', '');
+                if (preg_match('/^(ep-[a-z0-9-]+)/', $host, $epMatch)) {
+                    $endpoint = $epMatch[1];
+                    if ($pwd && !str_starts_with($pwd, 'endpoint=')) {
+                        return "endpoint={$endpoint}\${$pwd}";
+                    }
+                }
+                return $pwd;
+            })(),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
