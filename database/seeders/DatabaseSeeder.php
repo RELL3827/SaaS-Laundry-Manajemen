@@ -112,11 +112,9 @@ class DatabaseSeeder extends Seeder
                 'subtotal' => 3 * $reguler->price,
             ]);
             \App\Models\Payment::create([
-                'tenant_id' => $tenant->id,
                 'order_id' => $demoOrder->id,
                 'amount' => $demoOrder->total,
                 'method' => 'Cash',
-                'paid_at' => now(),
             ]);
         }
     }
