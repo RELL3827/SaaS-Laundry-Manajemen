@@ -87,9 +87,12 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => (function () {
-                $url = env('DB_URL', env('DATABASE_URL'));
+                $url = env('DB_URL', env('DATABASE_URL', env('POSTGRES_URL', env('POSTGRES_URL_NON_POOLING'))));
                 if (!$url) return null;
                 $url = trim((string) $url, " \t\n\r\0\x0B\"'");
+                // Strip channel_binding which causes SCRAM-SHA-256 password authentication failure on serverless Linux proxies
+                $url = preg_replace('/([?&])channel_binding=[^&]*(&?)/', '$1', $url);
+                $url = rtrim($url, '?&');
                 $url = str_replace('-pooler', '', $url);
                 if (preg_match('/@([^\/:]+)/', $url, $hostMatch)) {
                     if (preg_match('/^(ep-[a-z0-9-]+)/', $hostMatch[1], $epMatch)) {
@@ -104,13 +107,13 @@ return [
                 }
                 return $url;
             })(),
-            'host' => trim(str_replace('-pooler', '', (string) env('DB_HOST', '127.0.0.1')), " \t\n\r\0\x0B\"'"),
+            'host' => trim(str_replace('-pooler', '', (string) env('DB_HOST', env('POSTGRES_HOST', '127.0.0.1'))), " \t\n\r\0\x0B\"'"),
             'port' => trim((string) env('DB_PORT', '5432'), " \t\n\r\0\x0B\"'"),
-            'database' => trim((string) env('DB_DATABASE', 'neondb'), " \t\n\r\0\x0B\"'"),
-            'username' => trim((string) env('DB_USERNAME', 'neondb_owner'), " \t\n\r\0\x0B\"'"),
+            'database' => trim((string) env('DB_DATABASE', env('POSTGRES_DATABASE', 'neondb')), " \t\n\r\0\x0B\"'"),
+            'username' => trim((string) env('DB_USERNAME', env('POSTGRES_USER', 'neondb_owner')), " \t\n\r\0\x0B\"'"),
             'password' => (function () {
-                $pwd = trim((string) env('DB_PASSWORD', ''), " \t\n\r\0\x0B\"'");
-                $host = str_replace('-pooler', '', (string) env('DB_HOST', ''));
+                $pwd = trim((string) env('DB_PASSWORD', env('POSTGRES_PASSWORD', '')), " \t\n\r\0\x0B\"'");
+                $host = str_replace('-pooler', '', (string) env('DB_HOST', env('POSTGRES_HOST', '')));
                 if (preg_match('/^(ep-[a-z0-9-]+)/', $host, $epMatch)) {
                     $endpoint = str_replace('-pooler', '', $epMatch[1]);
                     if ($pwd && !str_starts_with($pwd, 'endpoint=')) {

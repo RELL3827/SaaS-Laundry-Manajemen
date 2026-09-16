@@ -116,3 +116,59 @@ Route::match(['get', 'post'], '/track/{order_number?}', function (\Illuminate\Ht
         'searched' => $searched,
     ]);
 })->name('track');
+
+Route::get('/api/db-check', function () {
+    $results = [
+        'timestamp' => now()->toIso8601String(),
+        'default_connection' => config('database.default'),
+        'env_detected' => [
+            'has_DATABASE_URL' => !empty(env('DATABASE_URL')),
+            'has_DB_URL' => !empty(env('DB_URL')),
+            'has_POSTGRES_URL' => !empty(env('POSTGRES_URL')),
+            'has_POSTGRES_URL_NON_POOLING' => !empty(env('POSTGRES_URL_NON_POOLING')),
+            'has_DB_PASSWORD' => !empty(env('DB_PASSWORD')),
+            'has_POSTGRES_PASSWORD' => !empty(env('POSTGRES_PASSWORD')),
+            'DB_HOST_raw' => env('DB_HOST', '(not set)'),
+            'DB_USERNAME_raw' => env('DB_USERNAME', '(not set)'),
+            'DB_DATABASE_raw' => env('DB_DATABASE', '(not set)'),
+        ],
+        'resolved_pgsql_config' => (function() {
+            $base = config('database.connections.pgsql');
+            if (!empty($base['url'])) {
+                $parsed = (new \Illuminate\Support\ConfigurationUrlParser())->parseConfiguration($base);
+                return [
+                    'source' => 'url',
+                    'host' => $parsed['host'] ?? null,
+                    'database' => $parsed['database'] ?? null,
+                    'username' => $parsed['username'] ?? null,
+                    'password_length' => strlen($parsed['password'] ?? ''),
+                    'password_starts_with_endpoint' => str_starts_with($parsed['password'] ?? '', 'endpoint='),
+                    'sslmode' => $parsed['sslmode'] ?? $base['sslmode'] ?? 'require',
+                ];
+            }
+            return [
+                'source' => 'direct_vars',
+                'host' => $base['host'] ?? null,
+                'database' => $base['database'] ?? null,
+                'username' => $base['username'] ?? null,
+                'password_length' => strlen($base['password'] ?? ''),
+                'password_starts_with_endpoint' => str_starts_with($base['password'] ?? '', 'endpoint='),
+                'sslmode' => $base['sslmode'] ?? 'require',
+            ];
+        })(),
+    ];
+
+    try {
+        $pdo = \Illuminate\Support\Facades\DB::connection('pgsql')->getPdo();
+        $results['status'] = 'CONNECTED';
+        $results['message'] = 'Koneksi ke Neon PostgreSQL BERHASIL!';
+        $results['users_count'] = \Illuminate\Support\Facades\DB::connection('pgsql')->table('users')->count();
+    } catch (\Throwable $e) {
+        $results['status'] = 'FAILED';
+        $results['error_message'] = $e->getMessage();
+        $results['error_code'] = $e->getCode();
+    }
+
+    return response()->json($results, $results['status'] === 'CONNECTED' ? 200 : 500, [], JSON_PRETTY_PRINT);
+});
+
