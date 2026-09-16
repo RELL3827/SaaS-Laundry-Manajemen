@@ -97,7 +97,7 @@ Route::get('/track/{order_number}', function ($order_number) {
 
 Route::get('/run-migration', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
         
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
