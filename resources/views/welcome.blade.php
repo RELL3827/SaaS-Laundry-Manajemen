@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LaundryPro - Sistem Manajemen & Kasir POS Laundry Modern</title>
     <meta name="description" content="Aplikasi kasir POS laundry modern, nota digital WhatsApp otomatis, pelacakan cucian real-time, dan laporan keuangan multi-outlet.">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
