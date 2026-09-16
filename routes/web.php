@@ -117,7 +117,7 @@ Route::match(['get', 'post'], '/track/{order_number?}', function (\Illuminate\Ht
     ]);
 })->name('track');
 
-Route::get('/api/db-check', function () {
+$dbCheckHandler = function () {
     $results = [
         'timestamp' => now()->toIso8601String(),
         'default_connection' => config('database.default'),
@@ -170,5 +170,8 @@ Route::get('/api/db-check', function () {
     }
 
     return response()->json($results, $results['status'] === 'CONNECTED' ? 200 : 500, [], JSON_PRETTY_PRINT);
-});
+};
+
+Route::get('/db-check', $dbCheckHandler);
+Route::get('/api/db-check', $dbCheckHandler);
 

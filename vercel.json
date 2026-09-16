@@ -4,7 +4,7 @@
   "framework": null,
   "buildCommand": "npm run build",
   "functions": {
-    "api/index.php": {
+    "api/*.php": {
       "runtime": "vercel-php@0.7.3",
       "maxDuration": 30
     }
@@ -21,6 +21,14 @@
     {
       "src": "/robots.txt",
       "dest": "/robots.txt"
+    },
+    {
+      "src": "/api/check",
+      "dest": "/api/check.php"
+    },
+    {
+      "src": "/api/check.php",
+      "dest": "/api/check.php"
     },
     {
       "src": "/(.*)",
